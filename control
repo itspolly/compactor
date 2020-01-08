@@ -1,0 +1,9 @@
+Package: co.dynastic.ios.tweak.compactor
+Name: Compactor
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Give your iOS device a fresh look, by compacting the system font.
+Maintainer: Dynastic
+Author: Dynastic
+Section: Tweaks
