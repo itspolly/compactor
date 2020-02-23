@@ -1,7 +1,7 @@
 Package: co.dynastic.ios.tweak.compactor
 Name: Compactor
 Depends: mobilesubstrate
-Version: 1.0.0
+Version: 1.0.1
 Architecture: iphoneos-arm
 Description: An alternate system font for your iOS device.
 Maintainer: Jamie Bishop <jamie@dynastic.co>
