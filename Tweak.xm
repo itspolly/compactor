@@ -9,12 +9,12 @@ void *(*fakeCTFontSetAltTextStyleSpec)(void);
 MSHook(size_t, UIApplicationInitialize) {
 	size_t orig = _UIApplicationInitialize();
 	if (fakeCTFontSetAltTextStyleSpec != NULL) {
-		make_sym_callable(fakeCTFontSetAltTextStyleSpec)();
+		fakeCTFontSetAltTextStyleSpec();
 	}
 	return orig;
 }
 
 %ctor {
 	MSHookFunction("_UIApplicationInitialize", MSHake(UIApplicationInitialize));
-	fakeCTFontSetAltTextStyleSpec = (void *(*)(void))MSFindSymbol(NULL, "_CTFontSetAltTextStyleSpec");
+	fakeCTFontSetAltTextStyleSpec = (void *(*)(void))make_sym_callable(MSFindSymbol(NULL, "_CTFontSetAltTextStyleSpec"));
 }
