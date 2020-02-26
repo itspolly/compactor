@@ -3,19 +3,30 @@
 
 #import "pac_helpers.h"
 
-size_t UIApplicationInitialize(void);
-void *(*fakeCTFontSetAltTextStyleSpec)(void);
+extern "C" {
+    size_t (*UIApplicationInitialize)(void) = NULL;
+    void *(*fakeCTFontSetAltTextStyleSpec)(void) = NULL;
+    void *CTFontSetAltTextStyleSpec(void) __attribute__((weak_import));
+}
 
 MSHook(size_t, UIApplicationInitialize) {
-	size_t orig = _UIApplicationInitialize();
-	fakeCTFontSetAltTextStyleSpec();
-	return orig;
+        size_t orig = _UIApplicationInitialize();
+        CTFontSetAltTextStyleSpec();
+        return orig;
 }
 
 %ctor {
-	void *_sym = MSFindSymbol(NULL, "_CTFontSetAltTextStyleSpec");
-	if (_sym != NULL) { 
-		fakeCTFontSetAltTextStyleSpec = (void *(*)(void))make_sym_callable(_sym);
-		MSHookFunction("_UIApplicationInitialize", MSHake(UIApplicationInitialize));
-	}
+    MSImageRef image = MSGetImageByName("/System/Library/PrivateFrameworks/UIKitCore.framework/UIKitCore");
+    if (!image) {
+        NSLog(@"[compactor] no UIKit");
+        return;
+    }
+
+    UIApplicationInitialize = (size_t (*)(void))MSFindSymbol(image, "_UIApplicationInitialize");
+    if (!UIApplicationInitialize) {
+        NSLog(@"[compactor] no _UIApplicationInitialize wtf???");
+        return;
+    }
+
+    MSHookFunction(UIApplicationInitialize, MSHake(UIApplicationInitialize));
 }
